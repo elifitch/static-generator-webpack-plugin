@@ -42,11 +42,11 @@ StaticSiteGeneratorWebpackPlugin.prototype.apply = function(compiler) {
               Page = Page['default'];
             }
 
-            const outputFileName = transform(inputPath);
             const locals = Object.assign({
               paths: pageKeys,
               path: inputPath,
-              outputPath: outputFileName,
+              outputPaths: pageKeys.map(transform),
+              outputPath: transform(inputPath),
               assets: assets,
               webpackStats: webpackStats
             }, this.locals);
@@ -58,7 +58,7 @@ StaticSiteGeneratorWebpackPlugin.prototype.apply = function(compiler) {
               });
             })
             .then(output => {
-              compilation.assets[outputFileName] = new RawSource(output);
+              compilation.assets[locals.outputPath] = new RawSource(output);
             })
             .catch(err => {
               compilation.errors.push(err.stack);
