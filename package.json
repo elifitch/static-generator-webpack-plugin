@@ -9,16 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/markdalgleish/static-site-generator-webpack-plugin"
+    "url": "https://github.com/krambuhl/static-generator-webpack-plugin"
   },
-  "author": "Mark Dalgleish",
+  "author": "Evan Krambuhl",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/markdalgleish/static-site-generator-webpack-plugin/issues"
+    "url": "https://github.com/krambuhl/static-generator-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/markdalgleish/static-site-generator-webpack-plugin",
+  "homepage": "https://github.com/krambuhl/static-generator-webpack-plugin",
   "dependencies": {
-    "bluebird": "^3.0.5",
     "eval": "^0.1.0",
     "webpack-sources": "^0.1.2"
   },
