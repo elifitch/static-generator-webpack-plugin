@@ -1,5 +1,11 @@
 # static generator webpack plugin
 
+---
+
+This is a fork of [static-site-generator-webpack-plugin](https://github.com/markdalgleish/static-site-generator-webpack-plugin) that allows for dynamic paths at runtime using webpack contexts.
+
+---
+
 Minimal, unopinionated static site generator powered by webpack.
 
 This plugin works particularly well with universal libraries like [React](https://github.com/facebook/react) and [React Router](https://github.com/rackt/react-router) since it allows you to prerender your routes at build time, rather than requiring a Node server in production.
@@ -7,7 +13,7 @@ This plugin works particularly well with universal libraries like [React](https:
 ## Install
 
 ```bash
-$ npm install --save-dev static-generator-webpack-plugin
+$ npm install static-generator-webpack-plugin --save-dev
 ```
 
 ## Usage
@@ -68,7 +74,12 @@ module.exports = {
   pages: Object.assign(
     {},
     requireAll(require.context('./pages/', true, /\.jsx$/))
-  )
+  ),
+  transform: inputPath => {
+    return inputPath
+      .replace('./', '')
+      .replace(/\.jsx/, '.html');
+  }
 }
 ```
 
@@ -115,13 +126,13 @@ module.exports = {
 Generated files can be compressed with [compression-webpack-plugin](https://github.com/webpack/compression-webpack-plugin), but first ensure that this plugin appears before compression-webpack-plugin in your plugins array:
 
 ```js
-const StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
+const StaticGeneratorPlugin = require('static-generator-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
   ...,
   plugins: [
-    new StaticSiteGeneratorPlugin(...),
+    new StaticGeneratorPlugin(...),
     new CompressionPlugin(...)
   ]
 };
@@ -131,7 +142,8 @@ module.exports = {
 ## Related projects
 
 - [react-router-to-array](https://github.com/alansouzati/react-router-to-array) - useful for avoiding hardcoded lists of routes to render
-- [gatsby](https://github.com/gatsbyjs/gatsby) - opinionated static site generator built on top of this plugin
+- [gatsby](https://github.com/gatsbyjs/gatsby) - opinionated static site generator built on top of this plugin's parent
+- [static-site-generator-webpack-plugin](https://github.com/markdalgleish/static-site-generator-webpack-plugin) - the orginial static site generator
 
 ## License
 

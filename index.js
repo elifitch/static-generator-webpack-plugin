@@ -34,21 +34,18 @@ StaticSiteGeneratorWebpackPlugin.prototype.apply = function(compiler) {
 
         const pageKeys = Object.keys(entry.pages);
         Promise.all(
-          pageKeys.map(outputPath => {
-            let Page = entry.pages[outputPath];
+          pageKeys.map(inputPath => {
+            let Page = entry.pages[inputPath];
+            const transform = (entry.transform) || (a => a);
 
             if (Page.hasOwnProperty('default')) {
               Page = Page['default'];
             }
 
-            const outputFileName =
-              outputPath
-								.substr(0, outputPath.length - path.extname(outputPath).length)
-                .replace('./', '') + '.html';
-
+            const outputFileName = transform(inputPath);
             const locals = Object.assign({
               paths: pageKeys,
-              path: outputPath,
+              path: inputPath,
               outputPath: outputFileName,
               assets: assets,
               webpackStats: webpackStats
