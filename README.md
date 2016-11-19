@@ -8,7 +8,6 @@ This is a fork of [static-site-generator-webpack-plugin](https://github.com/mark
 
 Minimal, unopinionated static site generator powered by webpack.
 
-This plugin works particularly well with universal libraries like [React](https://github.com/facebook/react) and [React Router](https://github.com/rackt/react-router) since it allows you to prerender your routes at build time, rather than requiring a Node server in production.
 
 ## Install
 
@@ -16,14 +15,16 @@ This plugin works particularly well with universal libraries like [React](https:
 $ npm install static-generator-webpack-plugin --save-dev
 ```
 
+
 ## Usage
 
 Ensure you have webpack installed, e.g. `npm install -g webpack`
 
+
 ### webpack.config.js
 
 ```js
-const StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
+const StaticGeneratorPlugin = require('static-generator-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -40,7 +41,7 @@ module.exports = {
   },
 
   plugins: [
-    new StaticSiteGeneratorPlugin('main', {
+    new StaticGeneratorPlugin('main', {
       // Properties here are passed to
       // the exported render function
       greet: 'Hello'
@@ -50,12 +51,12 @@ module.exports = {
 };
 ```
 
+
 ### index.js
 
 ```jsx
-// builds a path:module object
-// { './source/page.jsx': require('./source/page.jsx') }
-
+// creates an object with filepaths as keys
+// and modules as values
 function requireAll(context) {
   return context.keys().reduce((modules, key) => {
     modules[key] = context(key);
@@ -64,6 +65,8 @@ function requireAll(context) {
 }
 
 module.exports = {
+  // expects a render function that takes a module
+  // and returns a string
   render: (Page, locals, done) => {
     done(
       null,
@@ -71,10 +74,14 @@ module.exports = {
       Dom.renderToStaticMarkup(<Page locals={locals} />)
     )
   },
+  // expects an object with input filepaths for keys
+  // and module definitions as values
   pages: Object.assign(
     {},
     requireAll(require.context('./pages/', true, /\.jsx$/))
   ),
+  // expects a function that defines output path
+  // based on input module filepath
   transform: inputPath => {
     return inputPath
       .replace('./', '')
@@ -83,17 +90,25 @@ module.exports = {
 }
 ```
 
+
 ### Default locals
 
 ```jsx
-// The list of paths being rendered:
+// The list of input paths being rendered:
 locals.paths
 
 // The input filepath currently being rendered:
 locals.path;
 
+// the list of output paths being rendered
+locals.outputPaths;
+
 // The output filepath currently being rendered:
 locals.outputPath;
+
+// a helper string for resolving absolute paths 
+// to root.  eg. `../..` or `.`
+locals.baseHref;
 
 // An object containing all assets:
 locals.assets;
@@ -103,6 +118,7 @@ locals.webpackStats;
 ```
 
 Any additional locals provided in your config are also available.
+
 
 ## Scope
 
@@ -116,26 +132,9 @@ const scope = { window: {} };
 module.exports = {
   ...,
   plugins: [
-    new StaticSiteGeneratorPlugin('main', locals, scope)
+    new StaticGeneratorPlugin('main', locals, scope)
   ]
 }
-```
-
-## Compression support
-
-Generated files can be compressed with [compression-webpack-plugin](https://github.com/webpack/compression-webpack-plugin), but first ensure that this plugin appears before compression-webpack-plugin in your plugins array:
-
-```js
-const StaticGeneratorPlugin = require('static-generator-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
-
-module.exports = {
-  ...,
-  plugins: [
-    new StaticGeneratorPlugin(...),
-    new CompressionPlugin(...)
-  ]
-};
 ```
 
 

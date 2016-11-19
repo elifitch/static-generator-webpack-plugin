@@ -51,6 +51,15 @@ StaticSiteGeneratorWebpackPlugin.prototype.apply = function(compiler) {
               webpackStats: webpackStats
             }, this.locals);
 
+            const base =
+              locals.outputPath
+                .split('/')
+                .slice(1)
+                .map(p => '..')
+                .join('/');
+
+            locals.baseHref = base === '' ? '.' : base;
+
             return new Promise((resolve, reject) => {
               entry.render(Page, locals, (err, res) => {
                 if (err) reject(err);
